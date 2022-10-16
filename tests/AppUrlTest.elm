@@ -143,7 +143,7 @@ roundtripRandomUrlString =
                         ++ string
                         |> parseUrl
                         |> trimTrailingSlash
-                        |> AppUrl.fromFullUrl
+                        |> AppUrl.fromUrl
 
                 appUrl1String : String
                 appUrl1String =
@@ -155,7 +155,7 @@ roundtripRandomUrlString =
 
                 appUrl2 : AppUrl
                 appUrl2 =
-                    AppUrl.fromFullUrl url2
+                    AppUrl.fromUrl url2
             in
             Expect.all
                 [ \() ->
@@ -228,7 +228,7 @@ roundtripRandomAppUrl =
                     origin
                         ++ AppUrl.toString appUrl1
                         |> parseUrl
-                        |> AppUrl.fromFullUrl
+                        |> AppUrl.fromUrl
             in
             appUrl2
                 |> Expect.equal (trimEmptyTrailingSegment appUrl1)
@@ -309,7 +309,7 @@ testPath : ( String, String, List String ) -> Test
 testPath ( name, path, expected ) =
     test name <|
         \() ->
-            AppUrl.fromFullUrl { emptyUrl | path = path }
+            AppUrl.fromUrl { emptyUrl | path = path }
                 |> .path
                 |> Expect.equal expected
 
@@ -382,7 +382,7 @@ testQueryParameters ( name, input, expected ) =
             origin
                 ++ input
                 |> parseUrl
-                |> AppUrl.fromFullUrl
+                |> AppUrl.fromUrl
                 |> .queryParameters
                 |> Expect.equal expected
 
@@ -555,7 +555,7 @@ misc =
                     url =
                         "http://example.com/product/123?size=large&color=red#description"
                             |> parseUrl
-                            |> AppUrl.fromFullUrl
+                            |> AppUrl.fromUrl
                 in
                 Expect.all
                     [ Expect.equal
@@ -570,14 +570,14 @@ misc =
             \() ->
                 "http://example.com/Iñtërnâtiônàlizætiøn💩/искать/книги?søg=bøger#sök böcker"
                     |> parseUrl
-                    |> AppUrl.fromFullUrl
+                    |> AppUrl.fromUrl
                     |> AppUrl.toString
                     |> Expect.equal "/Iñtërnâtiônàlizætiøn💩/искать/книги?søg=bøger#sök%20böcker"
         , test "percent decoding" <|
             \() ->
                 "http://example.com/%C3%A4?%E2%9C%85=%E2%84%AE#%23"
                     |> parseUrl
-                    |> AppUrl.fromFullUrl
+                    |> AppUrl.fromUrl
                     |> AppUrl.toString
                     |> Expect.equal "/ä?✅=℮##"
         ]

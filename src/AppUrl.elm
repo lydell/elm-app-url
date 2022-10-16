@@ -1,6 +1,6 @@
 module AppUrl exposing
     ( AppUrl, QueryParameters
-    , fromFullUrl
+    , fromUrl
     , toString, pathToString
     )
 
@@ -14,7 +14,7 @@ module AppUrl exposing
 
 # Parse
 
-@docs fromFullUrl
+@docs fromUrl
 
 
 # Stringify
@@ -213,8 +213,8 @@ if you want to create a string with a trailing slash.
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 
 -}
-fromFullUrl : Url -> AppUrl
-fromFullUrl url =
+fromUrl : Url -> AppUrl
+fromUrl url =
     { path = parsePath url.path
     , queryParameters = url.query |> Maybe.map parseQueryParameters |> Maybe.withDefault Dict.empty
     , fragment = url.fragment |> Maybe.map percentDecode

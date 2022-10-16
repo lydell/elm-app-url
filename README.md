@@ -26,7 +26,7 @@ myFunction fullUrl =
     let
         url : AppUrl
         url =
-            AppUrl.fromFullUrl fullUrl
+            AppUrl.fromUrl fullUrl
     in
     doSomething url
 ```
@@ -166,7 +166,7 @@ See [Plus and space] for the specification the below follows.
 - `?&&` is parsed as `Dict.empty`. It _could_ have been parsed as the key being the empty string, and the value being the empty string as well, but empty spots are ignored.
 - `?r=1&r=2` is parsed as `Dict.singleton "r" [ "1", "2" ]`. Note how the `r` key has multiple values.
 - `?a+b=c+d` is parsed as `Dict.singleton "a b" [ "c d" ]`. Plus characters are turned into spaces – see [Plus and space].
-- Creating an [AppUrl][appurl-type] using [AppUrl.fromFullUrl] never results in a key with the empty list as values. So we _could_ have typed the values as a non-empty list. That’s usually nice because you can get the first item without worrying about `Maybe`s. However, in this case we have a `Dict` so there are `Maybe`s to worry about anyway. Also, it’s convenient to be able to use the empty list when creating URLs and only sometimes wanting to output a query parameter.
+- Creating an [AppUrl][appurl-type] using [AppUrl.fromUrl] never results in a key with the empty list as values. So we _could_ have typed the values as a non-empty list. That’s usually nice because you can get the first item without worrying about `Maybe`s. However, in this case we have a `Dict` so there are `Maybe`s to worry about anyway. Also, it’s convenient to be able to use the empty list when creating URLs and only sometimes wanting to output a query parameter.
 
 ### Escaping
 
@@ -220,7 +220,7 @@ Finally, what about relative URLs? I recommend not using them at all. This packa
 [application/x-www-form-urlencoded]: https://url.spec.whatwg.org/#urlencoded-parsing
 [appurl-module]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl
 [appurl-type]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#AppUrl
-[appurl.fromfullurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#fromFullUrl
+[appurl.fromurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#fromUrl
 [browser.application]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#application
 [concourse]: https://github.com/concourse/concourse/
 [django]: https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.QueryDict.__getitem__
