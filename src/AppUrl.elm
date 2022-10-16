@@ -28,8 +28,7 @@ import Escape
 import Url exposing (Url)
 
 
-{-| You might recognize this diagram from the core [Url] type documentation (taken
-from the the [URI spec]):
+{-| You might recognize this diagram from the core [Url] type documentation:
 
       https://example.com:8042/over/there?name=ferret#nose
       \___/   \______________/\_________/ \_________/ \__/
@@ -62,7 +61,6 @@ You can think of [Url] as the type you get from Elm when using
 you’ll use when parsing which page you’re on and when creating links.
 
 [Browser.application]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#application
-[URI spec]: https://tools.ietf.org/html/rfc3986
 [Url]: https://package.elm-lang.org/packages/elm/url/latest/Url#Url
 
 -}
@@ -109,12 +107,13 @@ type alias QueryParameters =
   - Query parameters are sorted by key.
 
 Each path segment, query parameter key, query parameter value and the fragment
-are all percent encoded, but very minimally. See [escaping] for details.
+are all percent encoded, but very minimally. See [escaping] and [plus and space] for details.
 
 See also [Full and relative URLs].
 
 [Full and relative URLs]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#full-and-relative-urls
 [escaping]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#escaping
+[plus and space]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#plus-and-space
 
 -}
 toString : AppUrl -> String
@@ -139,7 +138,7 @@ Here’s how it relates to [AppUrl.toString](#toString):
 -}
 pathToString : List String -> String
 pathToString path =
-    "/" ++ String.join "/" (List.map (percentEncode Escape.forPath) path)
+    "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
 
 
 queryParametersToString : QueryParameters -> String
@@ -173,10 +172,10 @@ queryParameterToString ( key, values ) =
                 -- print nothing at all which would lose this “parameter” next
                 -- time we parse.
                 if not (String.isEmpty key) && String.isEmpty value then
-                    percentEncode Escape.forQueryKey key
+                    percentEncode Escape.QueryKey key
 
                 else
-                    percentEncode Escape.forQueryKey key ++ "=" ++ percentEncode Escape.forQueryValue value
+                    percentEncode Escape.QueryKey key ++ "=" ++ percentEncode Escape.QueryValue value
             )
 
 
@@ -184,17 +183,17 @@ fragmentToString : Maybe String -> String
 fragmentToString maybeFragment =
     case maybeFragment of
         Just fragment ->
-            "#" ++ percentEncode String.fromChar fragment
+            "#" ++ percentEncode Escape.Fragment fragment
 
         Nothing ->
             ""
 
 
-percentEncode : (Char -> String) -> String -> String
-percentEncode encode string =
+percentEncode : Escape.Part -> String -> String
+percentEncode part string =
     string
         |> String.toList
-        |> List.map (Escape.forAll encode)
+        |> List.map (Escape.forAll part)
         |> String.concat
 
 
@@ -259,8 +258,13 @@ trimTrailingSlash string =
 
 
 percentDecode : String -> String
-percentDecode segment =
-    Url.percentDecode segment |> Maybe.withDefault segment
+percentDecode string =
+    Url.percentDecode string |> Maybe.withDefault string
+
+
+queryParameterDecode : String -> String
+queryParameterDecode =
+    String.replace "+" " " >> percentDecode
 
 
 parseQueryParameters : String -> QueryParameters
@@ -285,8 +289,8 @@ parseQueryParameter segment queryParameters =
         -- same as `=` followed by nothing (the empty string).
         rawKey :: rest ->
             Dict.update
-                (percentDecode rawKey)
-                (insert (percentDecode (String.join "=" rest)))
+                (queryParameterDecode rawKey)
+                (insert (queryParameterDecode (String.join "=" rest)))
                 queryParameters
 
 

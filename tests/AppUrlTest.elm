@@ -140,8 +140,9 @@ roundtripRandomUrlString =
                 appUrl1 =
                     origin
                         ++ "/"
-                        ++ trimTrailingSlash string
+                        ++ string
                         |> parseUrl
+                        |> trimTrailingSlash
                         |> AppUrl.fromFullUrl
 
                 appUrl1String : String
@@ -193,13 +194,16 @@ roundtripRandomUrlString =
                 ()
 
 
-trimTrailingSlash : String -> String
-trimTrailingSlash string =
-    if String.endsWith "/" string then
-        String.dropRight 1 string
+trimTrailingSlash : Url -> Url
+trimTrailingSlash url =
+    { url
+        | path =
+            if String.endsWith "/" url.path then
+                String.dropRight 1 url.path
 
-    else
-        string
+            else
+                url.path
+    }
 
 
 roundtripRandomAppUrl : Test
@@ -356,6 +360,18 @@ queryParameterTests =
       , "?r=1&r=2"
       , Dict.singleton "r" [ "1", "2" ]
       )
+    , ( "plus"
+      , "?a+b=c+d"
+      , Dict.singleton "a b" [ "c d" ]
+      )
+    , ( "escaped plus"
+      , "?a%2Bb=c%2Bd"
+      , Dict.singleton "a+b" [ "c+d" ]
+      )
+    , ( "both escaped and unescaped plus"
+      , "?a=%2B+"
+      , Dict.singleton "a" [ "+ " ]
+      )
     ]
 
 
@@ -430,19 +446,19 @@ escaping =
         , test "path non-escapes" <|
             \() ->
                 AppUrl.toString
-                    { path = [ "=", "&" ]
+                    { path = [ "=", "&", "+" ]
                     , queryParameters = Dict.empty
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/=/&"
+                    |> Expect.equal "/=/&/+"
         , test "query key escapes" <|
             \() ->
                 AppUrl.toString
                     { path = []
-                    , queryParameters = Dict.fromList [ ( "#", [ "a" ] ), ( "&", [ "a" ] ), ( "=", [ "a" ] ) ]
+                    , queryParameters = Dict.fromList [ ( "#", [ "a" ] ), ( "&", [ "a" ] ), ( "+", [ "a" ] ), ( "=", [ "a" ] ) ]
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/?%23=a&%26=a&%3D=a"
+                    |> Expect.equal "/?%23=a&%26=a&%2B=a&%3D=a"
         , test "query key non-escapes" <|
             \() ->
                 AppUrl.toString
@@ -455,10 +471,10 @@ escaping =
             \() ->
                 AppUrl.toString
                     { path = []
-                    , queryParameters = Dict.singleton "a" [ "&", "#" ]
+                    , queryParameters = Dict.singleton "a" [ "&", "#", "+" ]
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/?a=%26&a=%23"
+                    |> Expect.equal "/?a=%26&a=%23&a=%2B"
         , test "query value non-escapes" <|
             \() ->
                 AppUrl.toString
@@ -472,9 +488,18 @@ escaping =
                 AppUrl.toString
                     { path = []
                     , queryParameters = Dict.empty
-                    , fragment = Just "/?&=#"
+                    , fragment = Just "/?&=#+"
                     }
-                    |> Expect.equal "/#/?&=#"
+                    |> Expect.equal "/#/?&=#+"
+        , test "spaces and plus" <|
+            \() ->
+                AppUrl.toString
+                    -- Only treated specially in `queryParameters`.
+                    { path = [ " ", "+" ]
+                    , queryParameters = Dict.fromList [ ( " ", [ " " ] ), ( "+", [ "+" ] ) ]
+                    , fragment = Just " +"
+                    }
+                    |> Expect.equal "/%20/+?+=+&%2B=%2B#%20+"
         ]
 
 

@@ -1,8 +1,47 @@
-module Escape exposing (forAll, forPath, forQueryKey, forQueryValue)
+module Escape exposing (Part(..), forAll)
 
 
-forAll : (Char -> String) -> Char -> String
-forAll f char =
+type Part
+    = Path
+    | QueryKey
+    | QueryValue
+    | Fragment
+
+
+shouldHandlePlusAndSpace : Part -> Bool
+shouldHandlePlusAndSpace part =
+    case part of
+        Path ->
+            False
+
+        QueryKey ->
+            True
+
+        QueryValue ->
+            True
+
+        Fragment ->
+            False
+
+
+escapePart : Part -> Char -> String
+escapePart part =
+    case part of
+        Path ->
+            forPath
+
+        QueryKey ->
+            forQueryKey
+
+        QueryValue ->
+            forQueryValue
+
+        Fragment ->
+            String.fromChar
+
+
+forAll : Part -> Char -> String
+forAll part char =
     case char of
         '\u{0000}' ->
             "%00"
@@ -101,10 +140,21 @@ forAll f char =
             "%1F"
 
         ' ' ->
-            "%20"
+            if shouldHandlePlusAndSpace part then
+                "+"
+
+            else
+                "%20"
 
         '%' ->
             "%25"
+
+        '+' ->
+            if shouldHandlePlusAndSpace part then
+                "%2B"
+
+            else
+                String.fromChar char
 
         '\u{00A0}' ->
             "%C2%A0"
@@ -164,7 +214,7 @@ forAll f char =
             "%EF%BB%BF"
 
         _ ->
-            f char
+            escapePart part char
 
 
 forPath : Char -> String
