@@ -247,18 +247,16 @@ trimEmptyTrailingSegment url =
             url
 
 
-pathToString : Test
-pathToString =
-    Test.fuzz (Fuzz.list Fuzz.string) "pathToString" <|
+fromPath : Test
+fromPath =
+    Test.fuzz (Fuzz.list Fuzz.string) "fromPath" <|
         \path ->
-            AppUrl.pathToString path
+            AppUrl.fromPath path
                 |> Expect.equal
-                    (AppUrl.toString
-                        { path = path
-                        , queryParameters = Dict.empty
-                        , fragment = Nothing
-                        }
-                    )
+                    { path = path
+                    , queryParameters = Dict.empty
+                    , fragment = Nothing
+                    }
 
 
 emptyUrl : Url
@@ -588,7 +586,7 @@ tests =
     describe "AppUrl"
         [ roundtripRandomUrlString
         , roundtripRandomAppUrl
-        , pathToString
+        , fromPath
         , describe "path parsing" (List.map testPath pathParsingTests)
         , describe "query parameter parsing" (List.map testQueryParameters queryParameterTests)
         , escaping

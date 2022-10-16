@@ -88,14 +88,6 @@ viewLink : AppUrl -> Html msg
 viewLink url =
     Html.a [ Html.Attributes.href (AppUrl.toString url) ]
         [ Html.text "My link" ]
-
-
-viewProduct : ProductId -> Html msg
-viewProduct (ProductId productId) =
-    -- I recommend keeping URL parsing and to string in the same module,
-    -- rather than spreading it out in different view functions!
-    Html.a [ Html.Attributes.href (AppUrl.pathToString [ "product", productId ]) ]
-        [ Html.text "My product" ]
 ```
 
 ## Tip

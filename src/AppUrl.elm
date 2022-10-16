@@ -1,7 +1,7 @@
 module AppUrl exposing
     ( AppUrl, QueryParameters
-    , fromUrl
-    , toString, pathToString
+    , fromUrl, fromPath
+    , toString
     )
 
 {-| URLs for applications.
@@ -14,12 +14,12 @@ module AppUrl exposing
 
 # Parse
 
-@docs fromUrl
+@docs fromUrl, fromPath
 
 
 # Stringify
 
-@docs toString, pathToString
+@docs toString
 
 -}
 
@@ -59,6 +59,19 @@ are all percent decoded, so you never need to think about that. For example,
 You can think of [Url] as the type you get from Elm when using
 [Browser.application]. From it you can create an `AppUrl`, and that’s what
 you’ll use when parsing which page you’re on and when creating links.
+
+Different ways of creating an `AppUrl`:
+
+  - [AppUrl.fromUrl](#fromUrl)
+
+  - [AppUrl.fromPath](#fromPath)
+
+  - Construct the record directly:
+
+        { path = [ "my", "path" ]
+        , queryParameters = Dict.singleton "my" [ "parameter" ]
+        , fragment = Just "my-fragment"
+        }
 
 [Browser.application]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#application
 [Url]: https://package.elm-lang.org/packages/elm/url/latest/Url#Url
@@ -121,21 +134,6 @@ toString url =
     pathToString url.path ++ queryParametersToString url.queryParameters ++ fragmentToString url.fragment
 
 
-{-| Convenience function for creating a URL string like `/one/two` – starting with a
-slash, and without query parameters or fragment. (Use [AppUrl.toString](#toString)
-if you need those.)
-
-Here’s how it relates to [AppUrl.toString](#toString):
-
-    pathToString : List String -> String
-    pathToString path =
-        AppUrl.toString
-            { path = path
-            , queryParameters = Dict.empty
-            , fragment = Nothing
-            }
-
--}
 pathToString : List String -> String
 pathToString path =
     "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
@@ -218,6 +216,27 @@ fromUrl url =
     { path = parsePath url.path
     , queryParameters = url.query |> Maybe.map parseQueryParameters |> Maybe.withDefault Dict.empty
     , fragment = url.fragment |> Maybe.map percentDecode
+    }
+
+
+{-| Convenience function for creating an [AppUrl](#AppUrl) from just a path,
+when you don’t need any query parameters or fragment.
+
+It’s nothing more than this helper function:
+
+    fromPath : List String -> AppUrl
+    fromPath path =
+        { path = path
+        , queryParameters = Dict.empty
+        , fragment = Nothing
+        }
+
+-}
+fromPath : List String -> AppUrl
+fromPath path =
+    { path = path
+    , queryParameters = Dict.empty
+    , fragment = Nothing
     }
 
 
