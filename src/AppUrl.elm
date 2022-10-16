@@ -12,7 +12,7 @@ module AppUrl exposing
 @docs AppUrl, QueryParameters
 
 
-# Parse
+# Create
 
 @docs fromUrl, fromPath
 
@@ -20,6 +20,15 @@ module AppUrl exposing
 # Stringify
 
 @docs toString
+
+
+# Parse
+
+Are you looking for functions to parse route in your app? There are none! The
+idea is to use good old pattern matching on `.path`. See the [README] example
+for inspiration.
+
+[README]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest
 
 -}
 
@@ -66,7 +75,7 @@ Different ways of creating an `AppUrl`:
 
   - [AppUrl.fromPath](#fromPath)
 
-  - Construct the record directly:
+  - Create the record directly:
 
         { path = [ "my", "path" ]
         , queryParameters = Dict.singleton "my" [ "parameter" ]
@@ -102,8 +111,8 @@ Get the last value:
 See also [choosing a query parameter][choose] and [query parameter
 parsing][parse] for extra details.
 
-[choose]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#choosing-a-query-parameter
-[parse]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#query-parameter-parsing
+[choose]: https://github.com/lydell/elm-app-url/blob/main/docs/details.md#choosing-a-query-parameter
+[parse]: https://github.com/lydell/elm-app-url/blob/main/docs/details.md#query-parameter-parsing
 
 -}
 type alias QueryParameters =
@@ -124,9 +133,9 @@ are all percent encoded, but very minimally. See [escaping] and [plus and space]
 
 See also [Full and relative URLs].
 
-[Full and relative URLs]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#full-and-relative-urls
-[escaping]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#escaping
-[plus and space]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest#plus-and-space
+[Full and relative URLs]: https://github.com/lydell/elm-app-url/blob/main/docs/details.md#full-and-relative-urls
+[escaping]: https://github.com/lydell/elm-app-url/blob/main/docs/details.md#escaping
+[plus and space]: https://github.com/lydell/elm-app-url/blob/main/docs/details.md#plus-and-space
 
 -}
 toString : AppUrl -> String
