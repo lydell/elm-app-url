@@ -5,7 +5,7 @@
 Design principles:
 
 - Parsing: Avoid the complex types [Url.Parser] has, and use simple list pattern matching instead. Decode away all percentage escapes so you never need to think about them.
-- To string: No separate API like [Url.Builder]. Escape the minium needed with percentage escapes.
+- To string: No separate API like [Url.Builder]. Escape the minimum needed with percentage escapes.
 - Follow the [WHATWG URL Standard].
 - Handle the most common use cases rather than _all_ cases. (Use plain [Url] for full freedom).
 - Keep it simple. URLs shouldn’t be that complicated. `AppUrl` lets you use the parts of Elm you already know and be done with it, instead of having to learn about parsers, tricky type annotations and the `</>` and `<?>` operators.
