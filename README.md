@@ -4,12 +4,13 @@
 
 Design principles:
 
-- Parsing: Avoid the complex types like the ones [Url.Parser] has, and use simple list pattern matching instead. Decode away all percentage escapes so you never need to think about them.
+- Parsing: Avoid the complex types [Url.Parser] has, and use simple list pattern matching instead. Decode away all percentage escapes so you never need to think about them.
 - To string: No separate API like [Url.Builder]. Escape the minium needed with percentage escapes.
 - Follow the [WHATWG URL Standard].
 - Handle the most common use cases rather than _all_ cases. (Use plain [Url] for full freedom).
+- Keep it simple. URLs shouldn’t be that complicated. `AppUrl` lets you use the parts of Elm you already know and be done with it, instead of having to learn about parsers, tricky type annotations and the `</>` and `<?>` operators.
 
-The package is centered around the [AppUrl][appurl-type] type.
+The package is centered around the [AppUrl][appurl-type] type. Read things from it. Turn it into a string. That’s it.
 
 ## Example
 
@@ -55,6 +56,7 @@ type alias Filters =
 
 parse : AppUrl -> Maybe Page
 parse url =
+    -- Don’t forget to check out the tip further down as well!
     case url.path of
         [] ->
             Just Home
@@ -65,8 +67,8 @@ parse url =
         [ "products" ] ->
             Just
                 (ListProducts
-                    { color : Dict.get "color" url.queryParameters |> Maybe.andThen List.head
-                    , size : Dict.get "size" url.queryParameters |> Maybe.andThen List.head
+                    { color = Dict.get "color" url.queryParameters |> Maybe.andThen List.head
+                    , size = Dict.get "size" url.queryParameters |> Maybe.andThen List.head
                     }
                 )
 
@@ -90,11 +92,53 @@ viewLink url =
 
 viewProduct : ProductId -> Html msg
 viewProduct (ProductId productId) =
+    -- I recommend keeping URL parsing and to string in the same module,
+    -- rather than spreading it out in different view functions!
     Html.a [ Html.Attributes.href (AppUrl.pathToString [ "product", productId ]) ]
         [ Html.text "My product" ]
 ```
 
-👉 [TODO: Comprehensive example][todo]
+## Tip
+
+It’s completely fine to have something like this:
+
+```elm
+parse : AppUrl -> Maybe Page
+parse url =
+    case url.path of
+        [ "blog" ] -> x
+        [ "blog", postId ] -> x
+        [ "blog", postId, "edit" ] -> x
+        [ "blog", postId, "comment", commentId ] -> x
+        [ "blog", postId, "comment", commentId, "edit" ] -> x
+        _ -> Nothing
+```
+
+It might feel wrong to repeat the URL segment `blog` so many times, for example. My advice is: Don’t try to be clever here for the sake of following the “Don’t Repeat Yourself (DRY)” principle! The above is very simple and easy to read, and gives a nice overview of what all your URLs look like. It’s easy to change too, since all the repetitions of `blog` is in the same place.
+
+Do however avoid duplication in each branch by calling helper functions. But the pattern matching is better left “duplicated”.
+
+## Real world example
+
+[Concourse] is a big open source project with the frontend written in Elm. To try out `AppUrl`, I changed it from using [Url.Parser] and [Url.Builder] to `AppUrl`.
+
+1. A first almost 1:1 translation: https://github.com/lydell/concourse/commit/8b5779dfe1b0e423bac2d9a5803c0032c924924c
+
+   There are quite a few changes in that commit, but the most interesting ones are in `Routes.elm`. That commit shows that using `AppUrl` doesn’t result in much more code, even though it doesn’t have as many helper functions as [elm/url].
+
+2. A second commit which simplifies by not trying to be so DRY: https://github.com/lydell/concourse/commit/c2c7b94b359896e078dae140082406327c2b9c1a
+
+   This is a much smaller and much more interesting commit. It shows how repeating the same URL structure a couple of times results in shorter and simpler code that is also easier to get an overview of.
+
+3. Direct link to the most interesting part: https://github.com/lydell/concourse/blob/c2c7b94b359896e078dae140082406327c2b9c1a/web/elm/src/Routes.elm#L541-L581
+
+If you want to play around with this example yourself (requires Node.js):
+
+1. `git clone --recurse-submodules git@github.com:lydell/elm-app-url.git`
+2. `cd elm-app-url`
+3. `npm ci`
+4. `npm start`
+5. `open http://localhost:8080`
 
 ## Details
 
@@ -178,6 +222,7 @@ Finally, what about relative URLs? I recommend not using them at all. This packa
 [appurl-type]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#AppUrl
 [appurl.fromfullurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#fromFullUrl
 [browser.application]: https://package.elm-lang.org/packages/elm/browser/latest/Browser#application
+[concourse]: https://github.com/concourse/concourse/
 [django]: https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.QueryDict.__getitem__
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 [plus and space]: #plus-and-space

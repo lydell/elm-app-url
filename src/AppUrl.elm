@@ -4,7 +4,7 @@ module AppUrl exposing
     , toString, pathToString
     )
 
-{-| Urls for applications.
+{-| URLs for applications.
 
 
 # Types
@@ -206,8 +206,8 @@ Some sites use a trailing slash, some don’t. Users don’t know what to use wh
 This lets you support both. It’s up to you if you want to update the URL to a
 canonical version.
 
-Note: When using `AppUrl`, you can add an empty string at the end of the path,
-like `[ "one", "two", "" ]` if you want a string with a trailing slash back.
+Note: You can add an empty string at the end of the path, like `[ "one", "two", "" ]`
+if you want to create a string with a trailing slash.
 
 [Url]: https://package.elm-lang.org/packages/elm/url/latest/Url#Url
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest

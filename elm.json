@@ -1,7 +1,7 @@
 {
     "type": "package",
     "name": "lydell/elm-app-url",
-    "summary": "Urls for applications",
+    "summary": "URLs for applications",
     "license": "MIT",
     "version": "1.0.0",
     "exposed-modules": [
