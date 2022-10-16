@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "start": "run-pty % elm-test --watch % elm-review --fix --watch % elm-doc-preview --no-browser % elm-watch hot % node dev-server.js",
-    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate . % elm-review % elm-test % elm-watch make --optimize"
+    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate src tests % elm-review % elm-test % elm-watch make --optimize"
   },
   "devDependencies": {
     "elm-doc-preview": "5.0.5",
