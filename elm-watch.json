@@ -1,0 +1,10 @@
+{
+    "targets": {
+        "Concourse": {
+            "inputs": [
+                "concourse/web/elm/src/Main.elm"
+            ],
+            "output": "concourse/web/public/elm.min.js"
+        }
+    }
+}

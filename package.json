@@ -1,14 +1,16 @@
 {
   "private": true,
+  "type": "module",
   "scripts": {
-    "start": "run-pty % elm-test --watch % elm-review --fix --watch % elm-doc-preview",
-    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate . % elm-review % elm-test"
+    "start": "run-pty % elm-test --watch % elm-review --fix --watch % elm-doc-preview --no-browser % elm-watch hot % node dev-server.js",
+    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate . % elm-review % elm-test % elm-watch make --optimize"
   },
   "devDependencies": {
     "elm-doc-preview": "5.0.5",
     "elm-review": "2.7.6",
     "elm-test": "0.19.1-revision10",
     "elm-tooling": "1.10.0",
+    "elm-watch": "1.0.2",
     "prettier": "2.7.1",
     "run-pty": "4.0.2"
   }

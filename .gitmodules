@@ -1,0 +1,3 @@
+[submodule "concourse"]
+	path = concourse
+	url = ../concourse.git
