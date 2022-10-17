@@ -12,6 +12,58 @@
 
 3. Direct link to the most interesting part: https://github.com/lydell/concourse/blob/a6f9c674e4927ead637f0f9c9906a83ea69f0bfe/web/elm/src/Routes.elm#L541-L581
 
+## Note
+
+In the above commits you can see how I used [Dict.union] to merge two sets of [QueryParameters]. While it might work for the Concourse app, it does not work in all cases!
+
+For example, let’s say you want to merge these two:
+
+```elm
+queryParametersA = Dict.fromList [ ( "a", [ "A" ] ), ( "b", [ "B1" ] ) ]
+
+queryParametersB = Dict.fromList [ ( "b", [ "B2" ] ), ( "c", [ "C" ] ) ]
+```
+
+[Dict.union] gives the following result:
+
+```elm
+Dict.union queryParametersA queryParametersB
+   == Dict.fromList [ ( "a", [ "A" ] ), ( "b", [ "B1" ] ), ( "c", [ "C" ] ) ]
+```
+
+Notice how the merged query parameters contains all the keys (`a`, `b` and `c`), but how `b` only contains the value `B1` and not `B2`.
+
+The “correct” way to merge two sets of [QueryParameters] is:
+
+```elm
+Dict.merge
+   Dict.insert
+   (\key a b -> Dict.insert key (a ++ b))
+   Dict.insert
+   queryParametersA
+   queryParametersB
+   Dict.empty
+```
+
+That is much easier to write using `Dict.Extra.unionWith`:
+
+```elm
+Dict.Extra.unionWith (++) queryParametersA queryParametersB
+```
+
+However, at the time of this writing that function was’t merged yet: https://github.com/elm-community/dict-extra/pull/29
+
+That results in `b` getting both the `B1` and `B2` values:
+
+```elm
+Dict.Extra.unionWith (++) queryParametersA queryParametersB
+   == Dict.fromList [ ( "a", [ "A" ] ), ( "b", [ "B1", "B2" ] ), ( "c", [ "C" ] ) ]
+```
+
+I’m not sure yet if `AppUrl` should include a helper function for this.
+
+## Try it
+
 If you want to play around with this example yourself (requires [Node.js]):
 
 1. `git clone --recurse-submodules git@github.com:lydell/elm-app-url.git`
@@ -21,6 +73,9 @@ If you want to play around with this example yourself (requires [Node.js]):
 5. `open http://localhost:8080`
 
 [concourse]: https://github.com/concourse/concourse/
+[dict.union]: https://package.elm-lang.org/packages/elm/core/latest/Dict#union
+[elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 [node.js]: https://nodejs.org/
+[queryparameters]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest/AppUrl#QueryParameters
 [url.builder]: https://package.elm-lang.org/packages/elm/url/latest/Url-Builder
 [url.parser]: https://package.elm-lang.org/packages/elm/url/latest/Url-Parser
