@@ -30,7 +30,7 @@ parse url =
             Just Home
 
         [ "product", productId ] ->
-            Just (Product (ProductId productId))
+            String.toInt productId |> Maybe.map (Product << ProductId)
 
         [ "products" ] ->
             Just
@@ -51,7 +51,7 @@ type Page
 
 
 type ProductId
-    = ProductId String
+    = ProductId Int
 
 
 type alias Filters =
@@ -73,7 +73,7 @@ toAppUrl page =
             AppUrl.fromPath []
 
         Product (ProductId productId) ->
-            AppUrl.fromPath [ "product", productId ]
+            AppUrl.fromPath [ "product", String.fromInt productId ]
 
         ListProducts { color, size } ->
             { path = [ "products" ]
