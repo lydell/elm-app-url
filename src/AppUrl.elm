@@ -210,8 +210,8 @@ This removes one trailing slash from the end of the path (if any), for convenien
 For example, `/one/two` and `/one/two/` are both turned into `[ "one", "two" ]`.
 
 Some sites use a trailing slash, some don’t. Users don’t know what to use where.
-This lets you support both. It’s up to you if you want to update the URL to a
-canonical version.
+This lets you support both. It’s up to you if you want to update the URL in the
+location bar of the browser to a canonical version.
 
 Note: You can add an empty string at the end of the path, like `[ "one", "two", "" ]`
 if you want to create a string with a trailing slash.

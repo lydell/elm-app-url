@@ -16,7 +16,7 @@ I’ve considered adding a helper function for getting a single value, but in pr
 
 ## Query parameter parsing
 
-See [Plus and space] for the specification the below follows.
+See [Plus and space] for the specification for the below.
 
 - `?=foo` results in `Dict.singleton "" [ "foo" ]`. In other words, the empty string is a valid key name. (So is only whitespace, by the way.)
 - `?a&b=` results in `Dict.fromList [ ( "a", [ "" ] ), ( "b", [ "" ] ) ]`. In other words, a missing equals sign and an equals sign followed by nothing are both parsed as having the empty string as value.
@@ -65,7 +65,7 @@ Note that this is only for the query part, not for the path or the fragment.
 - “Origin absolute” URL – [AppUrl][appurl-type]: `/path`
 - Relative URL: `../path`, `./path`, `path`
 
-If you need a full URL with protocol, hostname and possibly a port there is nothing wrong with doing something like this:
+If you need a full URL string with protocol, hostname and possibly a port there is nothing wrong with doing something like this:
 
 ```elm
 "https://example.com" ++ AppUrl.toString myUrl

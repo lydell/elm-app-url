@@ -116,7 +116,7 @@ parse url =
         _ -> Nothing
 ```
 
-It might feel wrong to repeat the URL segment `blog` so many times, for example. My advice is: Don’t try to be clever here for the sake of following the “Don’t Repeat Yourself (DRY)” principle! The above is very simple and easy to read, and gives a nice overview of what all your URLs look like. It’s easy to change too, since all the repetitions of `blog` is in the same place.
+It might feel wrong to repeat the URL segment `blog` so many times, for example. My advice is: Don’t try to be clever here for the sake of following the “Don’t Repeat Yourself (DRY)” principle! The above is very simple and easy to read, and gives a nice overview of what all your URLs look like. It’s easy to change too, since all the repetitions of `blog` are in the same place.
 
 Do however avoid duplication in each branch by calling helper functions. But the pattern matching is better left “duplicated”.
 
