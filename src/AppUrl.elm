@@ -108,6 +108,15 @@ Get the last value:
 
     Dict.get "myParam" url.queryParameters |> Maybe.andThen List.Extra.last
 
+Create query parameters:
+
+    Dict.fromList
+        [ ( "myRequiredParam", [ "myValue" ] )
+
+        -- Parameters set to the empty list are omitted.
+        , ( "myOptionalParam", Maybe.Extra.toList someMaybeString )
+        ]
+
 See also [choosing a query parameter][choose] and [query parameter
 parsing][parse] for extra details.
 
@@ -120,6 +129,13 @@ type alias QueryParameters =
 
 
 {-| Turn an [AppUrl](#AppUrl) into a string.
+
+    AppUrl.toString
+        { path = [ "my", "path" ]
+        , queryParameters = Dict.singleton "my" [ "parameter" ]
+        , fragment = Just "my-fragment"
+        }
+        --> "/my/path?my=parameter#my-fragment"
 
   - The string always starts with `/`.
   - It only contains a `?` if there are any query parameters.
@@ -216,6 +232,21 @@ location bar of the browser to a canonical version.
 Note: You can add an empty string at the end of the path, like `[ "one", "two", "" ]`
 if you want to create a string with a trailing slash.
 
+Example:
+
+        AppUrl.fromUrl
+            { protocol = Url.Https
+            , host = "example.com"
+            , port_ = Nothing
+            , path = "/my/path"
+            , query = Just "my=parameter"
+            , fragment = Just "my-fragment"
+            }
+            --> { path = [ "my", "path" ]
+            --  , queryParameters = Dict.singleton "my" [ "parameter" ]
+            --  , fragment = Just "my-fragment"
+            --  }
+
 [Url]: https://package.elm-lang.org/packages/elm/url/latest/Url#Url
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 
@@ -239,6 +270,11 @@ It’s nothing more than this helper function:
         , queryParameters = Dict.empty
         , fragment = Nothing
         }
+
+Example:
+
+    AppUrl.fromPath [ "my", "path" ]
+    --> { path = [ "my", "path" ], queryParameters = Dict.empty, fragment = Nothing }
 
 -}
 fromPath : List String -> AppUrl
