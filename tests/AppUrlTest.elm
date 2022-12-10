@@ -4,6 +4,8 @@ import AppUrl exposing (AppUrl, QueryParameters)
 import Dict
 import Expect
 import Fuzz exposing (Fuzzer)
+import Json.Decode
+import Json.Encode
 import Regex exposing (Regex)
 import Test exposing (Test, describe, test)
 import Url exposing (Url)
@@ -222,15 +224,27 @@ roundtripRandomAppUrl =
     <|
         \appUrl1 ->
             let
-                appUrl2 : AppUrl
-                appUrl2 =
+                trimmedAppUrl1 : AppUrl
+                trimmedAppUrl1 =
+                    trimEmptyTrailingSegment appUrl1
+            in
+            Expect.all
+                [ \() ->
                     origin
                         ++ AppUrl.toString appUrl1
                         |> parseUrl
                         |> AppUrl.fromUrl
-            in
-            appUrl2
-                |> Expect.equal (trimEmptyTrailingSegment appUrl1)
+                        |> Expect.equal trimmedAppUrl1
+                , \() ->
+                    AppUrl.toString appUrl1
+                        |> AppUrl.fromString
+                        |> Expect.equal (Just trimmedAppUrl1)
+                , \() ->
+                    AppUrl.encoder appUrl1
+                        |> Json.Decode.decodeValue AppUrl.decoder
+                        |> Expect.equal (Ok trimmedAppUrl1)
+                ]
+                ()
 
 
 trimEmptyTrailingSegment : AppUrl -> AppUrl
@@ -256,6 +270,39 @@ fromPath =
                     , queryParameters = Dict.empty
                     , fragment = Nothing
                     }
+
+
+fromString : Test
+fromString =
+    describe "fromString"
+        [ Test.fuzz Fuzz.string "never fails if starts with slash" <|
+            \string ->
+                Expect.all
+                    [ (==) Nothing
+                        >> Expect.equal False
+                        >> Expect.onFail ("fromString failed to parse: " ++ string)
+                    , Expect.equal (Just (AppUrl.fromUrl (parseUrl (origin ++ "/" ++ string))))
+                    ]
+                    (AppUrl.fromString ("/" ++ string))
+        , test "fails if does not start with a slash" <|
+            \() ->
+                AppUrl.fromString "a"
+                    |> Expect.equal Nothing
+        , test "fails on the empty string" <|
+            \() ->
+                AppUrl.fromString ""
+                    |> Expect.equal Nothing
+        , test "nice example" <|
+            \() ->
+                AppUrl.fromString "/a/%C3%A4?c=ä&e=f#h"
+                    |> Expect.equal
+                        (Just
+                            { path = [ "a", "ä" ]
+                            , queryParameters = Dict.fromList [ ( "c", [ "ä" ] ), ( "e", [ "f" ] ) ]
+                            , fragment = Just "h"
+                            }
+                        )
+        ]
 
 
 emptyUrl : Url
@@ -577,6 +624,17 @@ misc =
                     |> AppUrl.fromUrl
                     |> AppUrl.toString
                     |> Expect.equal "/ä?✅=℮##"
+        , test "decoder error" <|
+            \() ->
+                Json.Decode.decodeValue
+                    (Json.Decode.field "url" AppUrl.decoder)
+                    (Json.Encode.object [ ( "url", Json.Encode.string "a/b?c=d#e" ) ])
+                    |> Result.mapError Json.Decode.errorToString
+                    |> Expect.equal (Err """Problem with the value at json.url:
+
+    "a/b?c=d#e"
+
+Expected a URL starting with a slash.""")
         ]
 
 
@@ -586,6 +644,7 @@ tests =
         [ roundtripRandomUrlString
         , roundtripRandomAppUrl
         , fromPath
+        , fromString
         , describe "path parsing" (List.map testPath pathParsingTests)
         , describe "query parameter parsing" (List.map testQueryParameters queryParameterTests)
         , escaping

@@ -1,7 +1,8 @@
 module AppUrl exposing
     ( AppUrl, QueryParameters
-    , fromUrl, fromPath
+    , fromUrl, fromPath, fromString
     , toString
+    , decoder, encoder
     )
 
 {-| URLs for applications.
@@ -14,12 +15,17 @@ module AppUrl exposing
 
 # Create
 
-@docs fromUrl, fromPath
+@docs fromUrl, fromPath, fromString
 
 
 # Stringify
 
 @docs toString
+
+
+# JSON
+
+@docs decoder, encoder
 
 
 # Parse
@@ -34,6 +40,8 @@ for inspiration.
 
 import Dict exposing (Dict)
 import Escape
+import Json.Decode
+import Json.Encode
 import Url exposing (Url)
 
 
@@ -285,6 +293,37 @@ fromPath path =
     }
 
 
+{-| Parse a string into an [AppUrl](#AppUrl).
+
+The only way this can fail is if the string does not start with "/".
+
+This is useful if you need to serialize an [AppUrl](#AppUrl). Note that for seralizing to JSON, it’s easier to use [AppUrl.decoder](#decoder) and [AppUrl.encoder](#encoder).
+
+    AppUrl.fromString "/my/path?my=parameter#my-fragment"
+    --> Just
+    --      { path = [ "my", "path" ]
+    --      , queryParameters = Dict.singleton "my" [ "parameter" ]
+    --      , fragment = Just "my-fragment"
+    --      }
+
+    AppUrl.fromString "my/path"
+    --> Nothing
+
+-}
+fromString : String -> Maybe AppUrl
+fromString string =
+    if String.startsWith "/" string then
+        -- This can fail in theory, but if you read the code in `Url.fromString`
+        -- you’ll see that it never will since we know that:
+        -- 1. The string starts with a valid scheme and domain.
+        -- 2. That is followed by at least a slash.
+        Url.fromString ("https://example.com" ++ string)
+            |> Maybe.map fromUrl
+
+    else
+        Nothing
+
+
 parsePath : String -> List String
 parsePath path =
     let
@@ -361,3 +400,51 @@ parseQueryParameter segment queryParameters =
 insert : a -> Maybe (List a) -> Maybe (List a)
 insert value maybeList =
     Just (value :: Maybe.withDefault [] maybeList)
+
+
+{-| A JSON decoder for [AppUrl](#AppUrl).
+
+It’s nothing more than this helper function:
+
+    decoder : Json.Decode.Decoder AppUrl
+    decoder =
+        Json.Decode.string
+            |> Json.Decode.andThen
+                (\string ->
+                    case AppUrl.fromString string of
+                        Just url ->
+                            Json.Decode.succeed url
+
+                        Nothing ->
+                            Json.Decode.fail "Expected a URL starting with a slash."
+                )
+
+See [AppUrl.fromString](#fromString) for more information.
+
+-}
+decoder : Json.Decode.Decoder AppUrl
+decoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\string ->
+                case fromString string of
+                    Just url ->
+                        Json.Decode.succeed url
+
+                    Nothing ->
+                        Json.Decode.fail "Expected a URL starting with a slash."
+            )
+
+
+{-| Encode an [AppUrl](#AppUrl) as JSON.
+
+It’s nothing more than this helper function:
+
+    encoder : AppUrl -> Json.Encode.Value
+    encoder =
+        AppUrl.toString >> Json.Encode.string
+
+-}
+encoder : AppUrl -> Json.Encode.Value
+encoder =
+    toString >> Json.Encode.string
