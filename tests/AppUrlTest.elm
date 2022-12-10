@@ -16,8 +16,7 @@ origin =
 
 parseUrl : String -> Url
 parseUrl urlString =
-    -- Remove tabs and newlines to simulate a browser.
-    case urlString |> String.replace "\t" "" |> String.replace "\n" "" |> Url.fromString of
+    case Url.fromString urlString of
         Just url ->
             url
 
