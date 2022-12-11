@@ -1,4 +1,10 @@
-# Real world example
+# Examples
+
+## Small example
+
+This repo contains a small `Browser.application` program to give a fuller picture on how you can use `AppUrl`. It also contains a comparison with [elm/url]. It’s in the [example folder].
+
+## Concourse
 
 [Concourse] is a big open source project with the frontend written in Elm. To try out `AppUrl`, I changed it from using [Url.Parser] and [Url.Builder] to `AppUrl`.
 
@@ -12,7 +18,7 @@
 
 3. Direct link to the most interesting part: https://github.com/lydell/concourse/blob/a6f9c674e4927ead637f0f9c9906a83ea69f0bfe/web/elm/src/Routes.elm#L541-L581
 
-## Note
+### Note
 
 In the above commits you can see how I used [Dict.union] to merge two sets of [QueryParameters]. While it might work for the Concourse app, it does not work in all cases!
 
@@ -64,17 +70,19 @@ I’m not sure yet if `AppUrl` should include a helper function for this.
 
 ## Try it
 
-If you want to play around with this example yourself (requires [Node.js]):
+If you want to play around with these examples yourself (requires [Node.js]):
 
 1. `git clone --recurse-submodules git@github.com:lydell/elm-app-url.git`
 2. `cd elm-app-url`
 3. `npm ci`
 4. `npm start`
-5. `open http://localhost:8080`
+5. `open http://localhost:8080` (small example)
+6. `open http://localhost:8081` (Concourse)
 
 [concourse]: https://github.com/concourse/concourse/
 [dict.union]: https://package.elm-lang.org/packages/elm/core/latest/Dict#union
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
+[example folder]: https://github.com/lydell/elm-app-url/tree/main/example
 [node.js]: https://nodejs.org/
 [queryparameters]: https://package.elm-lang.org/packages/lydell/elm-app-url/latest/AppUrl#QueryParameters
 [url.builder]: https://package.elm-lang.org/packages/elm/url/latest/Url-Builder

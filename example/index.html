@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elm-app-url example</title>
+    <style>
+      html {
+        font-family: system-ui, sans-serif;
+        padding: clamp(0.5rem, 3vw, 2rem);
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          color: #c8c8c8;
+          background: #1e1e1e;
+        }
+      }
+      a,
+      a:visited {
+        color: cornflowerblue;
+      }
+      h1 {
+        margin-top: 1.5em;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+      }
+      nav ul {
+        display: flex;
+        gap: 1em;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="/Main.elm.js"></script>
+    <script>
+      window.Elm.Main.init();
+    </script>
+  </body>
+</html>

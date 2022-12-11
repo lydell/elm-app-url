@@ -4,19 +4,12 @@ import * as https from "https";
 import * as path from "path";
 import { fileURLToPath } from "url";
 
-const ROOT = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "concourse",
-  "web"
-);
-
-const DEV_SERVER_PORT = 8080;
-
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json",
+  ".js": "text/javascript; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8",
   ".png": "image/png",
   ".svg": "image/svg+xml",
@@ -29,19 +22,27 @@ function looksLikeFile(url) {
   return /\.\w+(\?.*)?$/.test(url);
 }
 
-function serveFile(req, res, log, newUrl) {
+function serveFile(root, req, res, log, newUrl) {
   if (req.url === newUrl) {
-    serveFileHelper(req, res, log);
+    serveFileHelper(root, req, res, log);
   } else {
     req.url = newUrl;
-    serveFileHelper(req, res, (...args) => log(`-> ${newUrl}`, ...args));
+    serveFileHelper(root, req, res, (...args) => log(`-> ${newUrl}`, ...args));
   }
 }
 
-function serveFileHelper(req, res, log) {
+function serveFileHelper(root, req, res, log) {
   log(200);
-  res.writeHead(200, { "Content-Type": MIME_TYPES[path.extname(req.url)] });
-  fs.createReadStream(path.join(ROOT, req.url)).pipe(res, { end: true });
+  res.writeHead(200, {
+    "Content-Type": MIME_TYPES[path.extname(req.url)] ?? "",
+  });
+  fs.createReadStream(path.join(root, req.url))
+    .on("error", (error) => {
+      log(404);
+      res.writeHead(404);
+      res.end(`File not found: ${req.url}\n\n${error.stack}`);
+    })
+    .pipe(res, { end: true });
 }
 
 function proxyToWeb(req, res, log, hostname) {
@@ -89,20 +90,44 @@ function formatTime(date) {
     .join(":");
 }
 
-const server = http.createServer((req, res) => {
-  const log = makeLog(req);
-  if (req.url.startsWith("/api/")) {
-    proxyToWeb(req, res, log, "ci.concourse-ci.org");
-  } else {
+http
+  .createServer((req, res) => {
+    const log = makeLog(req);
     serveFile(
+      path.join(path.dirname(fileURLToPath(import.meta.url)), "example"),
       req,
       res,
       log,
-      looksLikeFile(req.url) ? req.url : "/public/index.html"
+      looksLikeFile(req.url) ? req.url : "/index.html"
     );
-  }
-});
+  })
+  .listen(8080, function () {
+    console.log(
+      `Small example ready at: http://localhost:${this.address().port}`
+    );
+  });
 
-server.listen(DEV_SERVER_PORT, () => {
-  console.log(`Server ready at: http://localhost:${DEV_SERVER_PORT}`);
-});
+http
+  .createServer((req, res) => {
+    const log = makeLog(req);
+    if (req.url.startsWith("/api/")) {
+      proxyToWeb(req, res, log, "ci.concourse-ci.org");
+    } else {
+      serveFile(
+        path.join(
+          path.dirname(fileURLToPath(import.meta.url)),
+          "concourse",
+          "web"
+        ),
+        req,
+        res,
+        log,
+        looksLikeFile(req.url) ? req.url : "/public/index.html"
+      );
+    }
+  })
+  .listen(8081, function () {
+    console.log(
+      `Concourse example ready at: http://localhost:${this.address().port}`
+    );
+  });

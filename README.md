@@ -91,7 +91,7 @@ toString =
     toAppUrl >> AppUrl.toString
 ```
 
-👉 **[Real world example]**
+👉 **[Full examples]**
 
 ## Design principles
 
@@ -122,7 +122,7 @@ Do however avoid duplication in each branch by calling helper functions. But the
 
 [appurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#AppUrl
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
-[real world example]: https://github.com/lydell/elm-app-url/blob/main/docs/real-world-example.md
+[full examples]: https://github.com/lydell/elm-app-url/blob/main/docs/examples.md
 [url.builder]: https://package.elm-lang.org/packages/elm/url/latest/Url-Builder
 [url.parser]: https://package.elm-lang.org/packages/elm/url/latest/Url-Parser
 [whatwg url standard]: https://url.spec.whatwg.org/#urlencoded-parsing

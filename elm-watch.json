@@ -1,5 +1,11 @@
 {
     "targets": {
+        "Example": {
+            "inputs": [
+                "example/Main.elm"
+            ],
+            "output": "example/Main.elm.js"
+        },
         "Concourse": {
             "inputs": [
                 "concourse/web/elm/src/Main.elm"

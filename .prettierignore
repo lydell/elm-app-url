@@ -1,3 +1,4 @@
 *.json
+*.elm.js
 concourse
 elm-stuff
