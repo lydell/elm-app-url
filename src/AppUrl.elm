@@ -24,7 +24,7 @@ module AppUrl exposing
 
 # Parse
 
-Are you looking for functions to parse route in your app? There are none! The
+Are you looking for functions to parse routes in your app? There are none! The
 idea is to use good old pattern matching on `.path`. See the [README] example
 for inspiration.
 
