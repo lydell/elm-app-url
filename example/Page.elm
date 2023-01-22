@@ -10,9 +10,15 @@ type Page
     | About
     | BlogHome Filters
     | BlogPost Slug
-    | BlogEdit Slug
+    | BlogPostEdit Slug
     | BlogComment Slug CommentId
-    | BlogEditComment Slug CommentId
+    | BlogCommentEdit Slug CommentId
+
+
+type alias Filters =
+    { category : Maybe String
+    , year : Maybe Int
+    }
 
 
 type Slug
@@ -21,12 +27,6 @@ type Slug
 
 type CommentId
     = CommentId Int
-
-
-type alias Filters =
-    { category : Maybe String
-    , year : Maybe Int
-    }
 
 
 {-| Compare with `ElmUrl.parse`!
@@ -52,7 +52,7 @@ fromAppUrl url =
             Just (BlogPost (Slug slug))
 
         [ "blog", slug, "edit" ] ->
-            Just (BlogEdit (Slug slug))
+            Just (BlogPostEdit (Slug slug))
 
         [ "blog", slug, "comment", commentId ] ->
             String.toInt commentId
@@ -60,7 +60,7 @@ fromAppUrl url =
 
         [ "blog", slug, "comment", commentId, "edit" ] ->
             String.toInt commentId
-                |> Maybe.map (BlogEditComment (Slug slug) << CommentId)
+                |> Maybe.map (BlogCommentEdit (Slug slug) << CommentId)
 
         _ ->
             Nothing
@@ -90,13 +90,13 @@ toAppUrl page =
         BlogPost (Slug slug) ->
             AppUrl.fromPath [ "blog", slug ]
 
-        BlogEdit (Slug slug) ->
+        BlogPostEdit (Slug slug) ->
             AppUrl.fromPath [ "blog", slug, "edit" ]
 
         BlogComment (Slug slug) (CommentId commentId) ->
             AppUrl.fromPath [ "blog", slug, "comment", String.fromInt commentId ]
 
-        BlogEditComment (Slug slug) (CommentId commentId) ->
+        BlogCommentEdit (Slug slug) (CommentId commentId) ->
             AppUrl.fromPath [ "blog", slug, "comment", String.fromInt commentId, "edit" ]
 
 

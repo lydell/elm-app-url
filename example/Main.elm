@@ -68,7 +68,7 @@ update msg model =
                     ( { model | page = Page.fromAppUrl (AppUrl.fromUrl url) }, Cmd.none )
 
                 UseElmUrl ->
-                    ( { model | page = ElmUrl.parse url }, Cmd.none )
+                    ( { model | page = ElmUrl.fromUrl url }, Cmd.none )
 
         ModeChanged mode ->
             ( { model | mode = mode }, Cmd.none )
@@ -168,7 +168,7 @@ viewPage page =
         Page.BlogPost (Page.Slug slug) ->
             Html.div []
                 [ Html.h1 [] [ Html.text slug ]
-                , Html.p [] [ Html.a [ Html.Attributes.href (Page.toString (Page.BlogEdit (Page.Slug slug))) ] [ Html.text "Edit" ] ]
+                , Html.p [] [ Html.a [ Html.Attributes.href (Page.toString (Page.BlogPostEdit (Page.Slug slug))) ] [ Html.text "Edit" ] ]
                 , Html.ul []
                     (List.map
                         (\( title, commentId ) ->
@@ -181,17 +181,17 @@ viewPage page =
                     )
                 ]
 
-        Page.BlogEdit (Page.Slug slug) ->
+        Page.BlogPostEdit (Page.Slug slug) ->
             Html.h1 [] [ Html.text ("Edit: " ++ slug) ]
 
         Page.BlogComment (Page.Slug slug) (Page.CommentId commentId) ->
             Html.div []
                 [ Html.h1 [] [ Html.text slug ]
                 , Html.p [] [ Html.text ("Comment: " ++ String.fromInt commentId) ]
-                , Html.p [] [ Html.a [ Html.Attributes.href (Page.toString (Page.BlogEditComment (Page.Slug slug) (Page.CommentId commentId))) ] [ Html.text "Edit" ] ]
+                , Html.p [] [ Html.a [ Html.Attributes.href (Page.toString (Page.BlogCommentEdit (Page.Slug slug) (Page.CommentId commentId))) ] [ Html.text "Edit" ] ]
                 ]
 
-        Page.BlogEditComment (Page.Slug slug) (Page.CommentId commentId) ->
+        Page.BlogCommentEdit (Page.Slug slug) (Page.CommentId commentId) ->
             Html.div []
                 [ Html.h1 [] [ Html.text slug ]
                 , Html.p [] [ Html.text ("Edit comment: " ++ String.fromInt commentId) ]

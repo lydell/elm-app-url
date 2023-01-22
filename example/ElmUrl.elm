@@ -1,4 +1,4 @@
-module ElmUrl exposing (parse, toString)
+module ElmUrl exposing (fromUrl, toString)
 
 import Page exposing (CommentId(..), Page(..), Slug(..))
 import Url exposing (Url)
@@ -7,8 +7,8 @@ import Url.Parser as Parser exposing ((</>), (<?>), Parser)
 import Url.Parser.Query as Query
 
 
-parse : Url -> Maybe Page
-parse url =
+fromUrl : Url -> Maybe Page
+fromUrl url =
     Parser.parse parser url
 
 
@@ -31,7 +31,7 @@ parser =
         , Parser.s "blog"
             </> Parser.string
             </> Parser.s "edit"
-            |> Parser.map (\slug -> BlogEdit (Slug slug))
+            |> Parser.map (\slug -> BlogPostEdit (Slug slug))
         , Parser.s "blog"
             </> Parser.string
             </> Parser.s "comment"
@@ -42,7 +42,7 @@ parser =
             </> Parser.s "comment"
             </> Parser.int
             </> Parser.s "edit"
-            |> Parser.map (\slug commentId -> BlogEditComment (Slug slug) (CommentId commentId))
+            |> Parser.map (\slug commentId -> BlogCommentEdit (Slug slug) (CommentId commentId))
         ]
 
 
@@ -68,11 +68,11 @@ toString page =
         BlogPost (Slug slug) ->
             Builder.absolute [ "blog", slug ] []
 
-        BlogEdit (Slug slug) ->
+        BlogPostEdit (Slug slug) ->
             Builder.absolute [ "blog", slug, "edit" ] []
 
         BlogComment (Slug slug) (CommentId commentId) ->
             Builder.absolute [ "blog", slug, "comment", String.fromInt commentId ] []
 
-        BlogEditComment (Slug slug) (CommentId commentId) ->
+        BlogCommentEdit (Slug slug) (CommentId commentId) ->
             Builder.absolute [ "blog", slug, "comment", String.fromInt commentId, "edit" ] []
