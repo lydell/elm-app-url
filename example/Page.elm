@@ -34,12 +34,15 @@ type CommentId
 fromAppUrl : AppUrl -> Maybe Page
 fromAppUrl url =
     case url.path of
+        -- /
         [] ->
             Just Home
 
+        -- /about
         [ "about" ] ->
             Just About
 
+        -- /blog?category=elm&year=2023
         [ "blog" ] ->
             Just
                 (BlogHome
@@ -48,16 +51,20 @@ fromAppUrl url =
                     }
                 )
 
+        -- /blog/slug-of-title
         [ "blog", slug ] ->
             Just (BlogPost (Slug slug))
 
+        -- /blog/slug-of-title/edit
         [ "blog", slug, "edit" ] ->
             Just (BlogPostEdit (Slug slug))
 
+        -- /blog/slug-of-title/comment/1
         [ "blog", slug, "comment", commentId ] ->
             String.toInt commentId
                 |> Maybe.map (BlogComment (Slug slug) << CommentId)
 
+        -- /blog/slug-of-title/comment/1/edit
         [ "blog", slug, "comment", commentId, "edit" ] ->
             String.toInt commentId
                 |> Maybe.map (BlogCommentEdit (Slug slug) << CommentId)

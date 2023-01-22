@@ -17,26 +17,39 @@ fromUrl url =
 parser : Parser (Page -> a) a
 parser =
     Parser.oneOf
-        [ Parser.top
+        [ -- /
+          Parser.top
             |> Parser.map Home
+
+        -- /about
         , Parser.s "about"
             |> Parser.map About
+
+        -- /blog?category=elm&year=2023
         , Parser.s "blog"
             <?> Query.string "category"
             <?> Query.int "year"
             |> Parser.map (\category year -> BlogHome { category = category, year = year })
+
+        -- /blog/slug-of-title
         , Parser.s "blog"
             </> Parser.string
             |> Parser.map (\slug -> BlogPost (Slug slug))
+
+        -- /blog/slug-of-title/edit
         , Parser.s "blog"
             </> Parser.string
             </> Parser.s "edit"
             |> Parser.map (\slug -> BlogPostEdit (Slug slug))
+
+        -- /blog/slug-of-title/comment/1
         , Parser.s "blog"
             </> Parser.string
             </> Parser.s "comment"
             </> Parser.int
             |> Parser.map (\slug commentId -> BlogComment (Slug slug) (CommentId commentId))
+
+        -- /blog/slug-of-title/comment/1/edit
         , Parser.s "blog"
             </> Parser.string
             </> Parser.s "comment"
