@@ -49,6 +49,8 @@ The idea is that URLs are very loosely defined in what characters are allowed an
 
 The escaping mindset is the same as for `Html`: When using `Html.text` you can give it any text you want and never have to worry about `<` creating an element. Similarly, you can’t expect `&nbsp;` to give you a non-breaking space; it will be the literal string `&nbsp;` (5 characters). Same idea with URLs here: You can put any strings in path segments, query parameter keys, query parameter values and the fragment and you never need to worry about a slash causing an extra segment or an ampersand causing an extra query parameter etc. Similarly, you can’t put slashes in path segment strings and expect them to end up as slashes (they’ll be escaped as `%2F`), and you can’t expect `%20` to be an escape for a space (it will be escaped as `%2520`).
 
+Note: `AppUrl.fromPath [ "a", "..", "b" ] |> AppUrl.toString` results in `/a/../b` which browsers interpret as `/b`. Escapes do not help: Browsers interpret `/a/%2E%2E/b` as `/c` as well. It does not seem to be possible to have a literal `..` segment in a URL path. Same thing for `.`.
+
 ## Plus and space
 
 The [WHATWG URL Standard] defines a format for URLs, as well as the `new URL()` API in JavaScript, which is really good. The `URL` class has a `.searchParams` property which `AppUrl`’s `.queryParameters` is inspired by. `.searchParams` is an instance of the `URLSearchParams` class, which is [specified][urlsearchparams] to use the [application/x-www-form-urlencoded] format. That format says how to parse query parameters, and that `+` should be treated as space.
