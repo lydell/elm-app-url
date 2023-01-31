@@ -120,7 +120,7 @@ It might feel wrong to repeat the URL segment `blog` so many times, for example.
 
 Do however avoid duplication in each branch by calling helper functions. But the pattern matching is better left “duplicated”.
 
-[appurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.0/AppUrl#AppUrl
+[appurl]: https://package.elm-lang.org/packages/lydell/elm-app-url/1.0.2/AppUrl/#AppUrl
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 [full examples]: https://github.com/lydell/elm-app-url/blob/main/docs/examples.md
 [url.builder]: https://package.elm-lang.org/packages/elm/url/latest/Url-Builder
