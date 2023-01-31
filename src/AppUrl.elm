@@ -161,24 +161,7 @@ toString url =
 
 pathToString : List String -> String
 pathToString path =
-    "/" ++ String.join "/" (List.map encodePathSegment path)
-
-
-encodePathSegment : String -> String
-encodePathSegment segment =
-    -- `.` and `..` are special cased segments. When normalizing a URL,
-    -- `a/./b` becomes `a/b`, and `a/b/../c` becomes `a/c`. Dots have no
-    -- special meaning otherwise. This package avoids all kinds of relative
-    -- URLs. Instead, what you put in is what you get back.
-    case segment of
-        "." ->
-            "%2E"
-
-        ".." ->
-            "%2E%2E"
-
-        _ ->
-            percentEncode Escape.Path segment
+    "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
 
 
 queryParametersToString : QueryParameters -> String

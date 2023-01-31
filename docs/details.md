@@ -40,14 +40,14 @@ The specification linked to above says that all tabs and newlines should be remo
 
 Then there are different escaping rules for different parts of [AppUrl][appurl-type]:
 
-- path: `/`, `?` and `#` are escaped as well. Slash because it starts a new segment. Question mark and hash since it starts the query and fragment, respectively. On top of that, a segment that is _only_ `.` or `..` are escaped, since `.` segments are removed during URL normalization and `..` means “go up one level”.
+- path: `/`, `?` and `#` are escaped as well. Slash because it starts a new segment. Question mark and hash since it starts the query and fragment, respectively.
 - query key: `=`, `&`, `#` and `+` are escaped as well. Equals since it starts the value, ampersand since it starts a new query parameter, hash since it starts the fragment and plus since it’s treated as a space in the query part. Also, spaces are escaped as `+` – see [Plus and space].
 - query value: `&`, `#` and `+` are escaped as well, for the same reasons as above. Note that `?k=1=2` is valid; the value is `1=2`. Also, spaces are escaped as `+` – see [Plus and space].
 - fragment: No more escaping. The fragment goes on til the end of the URL.
 
 The idea is that URLs are very loosely defined in what characters are allowed and which ones aren’t. Browsers seem to support basically any characters (possibly looser than some specification says, but hey – we run Elm code in browsers!). Escaping just the bare minimum means we don’t escape letters from non-English languages (like `ä` or `π`) into ugly percent sequences.
 
-The escaping mindset is the same as for `Html`: When using `Html.text` you can give it any text you want and never have to worry about `<` creating an element. Similarly, you can’t expect `&nbsp;` to give you a non-breaking space; it will be the literal string `&nbsp;` (5 characters). Same idea with URLs here: You can put any strings in path segments, query parameter keys, query parameter values and the fragment and you never need to worry about a slash causing an extra segment or an ampersand causing an extra query parameter etc. Similarly, you can’t put slashes in path segment strings and expect them to end up as slashes (they’ll be escaped as `%2F`), and you can’t expect `%20` to be an escape for a space (it will be escaped as `%2520`). Finally, `..` means two dots, not “go up one level”.
+The escaping mindset is the same as for `Html`: When using `Html.text` you can give it any text you want and never have to worry about `<` creating an element. Similarly, you can’t expect `&nbsp;` to give you a non-breaking space; it will be the literal string `&nbsp;` (5 characters). Same idea with URLs here: You can put any strings in path segments, query parameter keys, query parameter values and the fragment and you never need to worry about a slash causing an extra segment or an ampersand causing an extra query parameter etc. Similarly, you can’t put slashes in path segment strings and expect them to end up as slashes (they’ll be escaped as `%2F`), and you can’t expect `%20` to be an escape for a space (it will be escaped as `%2520`).
 
 ## Plus and space
 

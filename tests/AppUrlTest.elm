@@ -440,14 +440,6 @@ escaping =
                     , fragment = Nothing
                     }
                     |> Expect.equal "/%2F/%3F/%23"
-        , test "path escapes: dot and dot-dot" <|
-            \() ->
-                AppUrl.toString
-                    { path = [ "a", ".", "b", "..", "c", "...", "d.html" ]
-                    , queryParameters = Dict.empty
-                    , fragment = Nothing
-                    }
-                    |> Expect.equal "/a/%2E/b/%2E%2E/c/.../d.html"
         , test "path non-escapes" <|
             \() ->
                 AppUrl.toString
