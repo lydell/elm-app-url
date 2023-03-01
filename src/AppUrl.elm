@@ -214,10 +214,7 @@ fragmentToString maybeFragment =
 
 percentEncode : Escape.Part -> String -> String
 percentEncode part string =
-    string
-        |> String.toList
-        |> List.map (Escape.forAll part)
-        |> String.concat
+    String.foldr (\char acc -> Escape.forAll part char ++ acc) "" string
 
 
 {-| Turn a [Url] from [elm/url] into an [AppUrl](#AppUrl).
