@@ -154,7 +154,7 @@ forAll part char =
                 "%2B"
 
             else
-                String.fromChar char
+                "+"
 
         '\u{00A0}' ->
             "%C2%A0"
