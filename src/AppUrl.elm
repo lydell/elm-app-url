@@ -194,7 +194,7 @@ queryParameterToString ( key, values ) =
                 -- we normally do when the value is the empty string), we would
                 -- print nothing at all which would lose this “parameter” next
                 -- time we parse.
-                if not (String.isEmpty key) && String.isEmpty value then
+                if key /= "" && value == "" then
                     percentEncode Escape.QueryKey key
 
                 else
@@ -291,7 +291,7 @@ parsePath path =
                 |> trimLeadingSlash
                 |> trimTrailingSlash
     in
-    if String.isEmpty trimmed then
+    if trimmed == "" then
         []
 
     else
