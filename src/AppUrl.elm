@@ -161,7 +161,12 @@ toString url =
 
 pathToString : List String -> String
 pathToString path =
-    "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
+    case path of
+        [] ->
+            "/"
+
+        p ->
+            List.foldl (\el acc -> acc ++ "/" ++ percentEncode Escape.Path el) "" p
 
 
 queryParametersToString : QueryParameters -> String
