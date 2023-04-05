@@ -3,8 +3,7 @@ module Escape exposing (Part(..), forAll)
 
 type Part
     = Path
-    | QueryKey
-    | QueryValue
+    | Query
     | Fragment
 
 
@@ -14,10 +13,7 @@ shouldHandlePlusAndSpace part =
         Path ->
             False
 
-        QueryKey ->
-            True
-
-        QueryValue ->
+        Query ->
             True
 
         Fragment ->
@@ -30,11 +26,8 @@ escapePart part =
         Path ->
             forPath
 
-        QueryKey ->
-            forQueryKey
-
-        QueryValue ->
-            forQueryValue
+        Query ->
+            forQuery
 
         Fragment ->
             String.fromChar
@@ -233,25 +226,12 @@ forPath char =
             String.fromChar char
 
 
-forQueryKey : Char -> String
-forQueryKey char =
+forQuery : Char -> String
+forQuery char =
     case char of
         '=' ->
             "%3D"
 
-        '&' ->
-            "%26"
-
-        '#' ->
-            "%23"
-
-        _ ->
-            String.fromChar char
-
-
-forQueryValue : Char -> String
-forQueryValue char =
-    case char of
         '&' ->
             "%26"
 

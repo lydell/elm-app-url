@@ -41,8 +41,7 @@ The specification linked to above says that all tabs and newlines should be remo
 Then there are different escaping rules for different parts of [AppUrl][appurl-type]:
 
 - path: `/`, `?` and `#` are escaped as well. Slash because it starts a new segment. Question mark and hash since it starts the query and fragment, respectively.
-- query key: `=`, `&`, `#` and `+` are escaped as well. Equals since it starts the value, ampersand since it starts a new query parameter, hash since it starts the fragment and plus since it’s treated as a space in the query part. Also, spaces are escaped as `+` – see [Plus and space].
-- query value: `&`, `#` and `+` are escaped as well, for the same reasons as above. Note that `?k=1=2` is valid; the value is `1=2`. Also, spaces are escaped as `+` – see [Plus and space].
+- query key and value: `=`, `&`, `#` and `+` are escaped as well. Equals since it starts the value, ampersand since it starts a new query parameter, hash since it starts the fragment and plus since it’s treated as a space in the query part. Also, spaces are escaped as `+` – see [Plus and space]. Note that `?k=1=2` is technically valid; the value is `1=2`. elm-app-url escapes the second equals sign anyway, to be compatible with naive parsing code that splits on `=` and assumes it returns a list with only one or two items ([example][suave-naive-parsing]).
 - fragment: No more escaping. The fragment goes on til the end of the URL.
 
 The idea is that URLs are very loosely defined in what characters are allowed and which ones aren’t. Browsers seem to support basically any characters (possibly looser than some specification says, but hey – we run Elm code in browsers!). Escaping just the bare minimum means we don’t escape letters from non-English languages (like `ä` or `π`) into ugly percent sequences.
@@ -84,6 +83,7 @@ Finally, what about relative URLs? I recommend not using them at all. This packa
 [django]: https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.QueryDict.__getitem__
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 [plus and space]: #plus-and-space
+[suave-naive-parsing]: https://github.com/SuaveIO/suave/blob/8efe4b32ea0dc52f36c10c8d8fec8191c6ae901c/src/Suave/Utils/Parsing.fs#L18-L27
 [url]: https://package.elm-lang.org/packages/elm/url/latest/Url#Url
 [urlsearchparams.get()]: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get
 [urlsearchparams]: https://url.spec.whatwg.org/#example-constructing-urlsearchparams
