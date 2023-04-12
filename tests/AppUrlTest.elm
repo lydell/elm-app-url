@@ -468,18 +468,18 @@ escaping =
             \() ->
                 AppUrl.toString
                     { path = []
-                    , queryParameters = Dict.singleton "a" [ "&", "#", "+" ]
+                    , queryParameters = Dict.singleton "a" [ "&", "#", "+", "=" ]
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/?a=%26&a=%23&a=%2B"
+                    |> Expect.equal "/?a=%26&a=%23&a=%2B&a=%3D"
         , test "query value non-escapes" <|
             \() ->
                 AppUrl.toString
                     { path = []
-                    , queryParameters = Dict.singleton "a" [ "/", "?", "=" ]
+                    , queryParameters = Dict.singleton "a" [ "/", "?" ]
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/?a=/&a=?&a=="
+                    |> Expect.equal "/?a=/&a=?"
         , test "fragment non-escapes" <|
             \() ->
                 AppUrl.toString

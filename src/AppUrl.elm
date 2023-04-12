@@ -195,10 +195,10 @@ queryParameterToString ( key, values ) =
                 -- print nothing at all which would lose this “parameter” next
                 -- time we parse.
                 if not (String.isEmpty key) && String.isEmpty value then
-                    percentEncode Escape.QueryKey key
+                    percentEncode Escape.Query key
 
                 else
-                    percentEncode Escape.QueryKey key ++ "=" ++ percentEncode Escape.QueryValue value
+                    percentEncode Escape.Query key ++ "=" ++ percentEncode Escape.Query value
             )
 
 
