@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "start": "run-pty % elm-test --watch % elm-review --fix --watch % elm-doc-preview --no-browser % elm-watch hot % node dev-server.js",
-    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate src tests example % elm-review % elm-test % elm-watch make --optimize"
+    "test": "run-pty --auto-exit % prettier --check . % elm-format --validate src tests example % elm-review % elm-test % elm-watch make --optimize",
+    "benchmarks": "cd benchmarks && elm make src/Benchmarks.elm"
   },
   "devDependencies": {
     "elm-doc-preview": "5.0.5",

@@ -1,9 +1,10 @@
-module Escape exposing (Part(..), forAll)
+module New.Escape exposing (Part(..), forAll)
 
 
 type Part
     = Path
-    | Query
+    | QueryKey
+    | QueryValue
     | Fragment
 
 
@@ -13,7 +14,10 @@ shouldHandlePlusAndSpace part =
         Path ->
             False
 
-        Query ->
+        QueryKey ->
+            True
+
+        QueryValue ->
             True
 
         Fragment ->
@@ -26,8 +30,11 @@ escapePart part =
         Path ->
             forPath
 
-        Query ->
-            forQuery
+        QueryKey ->
+            forQueryKey
+
+        QueryValue ->
+            forQueryValue
 
         Fragment ->
             String.fromChar
@@ -147,7 +154,7 @@ forAll part char =
                 "%2B"
 
             else
-                String.fromChar char
+                "+"
 
         '\u{00A0}' ->
             "%C2%A0"
@@ -226,12 +233,25 @@ forPath char =
             String.fromChar char
 
 
-forQuery : Char -> String
-forQuery char =
+forQueryKey : Char -> String
+forQueryKey char =
     case char of
         '=' ->
             "%3D"
 
+        '&' ->
+            "%26"
+
+        '#' ->
+            "%23"
+
+        _ ->
+            String.fromChar char
+
+
+forQueryValue : Char -> String
+forQueryValue char =
+    case char of
         '&' ->
             "%26"
 

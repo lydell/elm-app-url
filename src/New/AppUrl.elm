@@ -1,4 +1,4 @@
-module AppUrl exposing
+module New.AppUrl exposing
     ( AppUrl, QueryParameters
     , fromUrl, fromPath
     , toString
@@ -34,7 +34,7 @@ for inspiration.
 -}
 
 import Dict exposing (Dict)
-import Escape
+import New.Escape as Escape
 import Url exposing (Url)
 
 
@@ -162,7 +162,12 @@ toString url =
 
 pathToString : List String -> String
 pathToString path =
-    "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
+    case path of
+        [] ->
+            "/"
+
+        p ->
+            List.foldl (\el acc -> acc ++ "/" ++ percentEncode Escape.Path el) "" p
 
 
 queryParametersToString : QueryParameters -> String
@@ -195,11 +200,11 @@ queryParameterToString ( key, values ) =
                 -- we normally do when the value is the empty string), we would
                 -- print nothing at all which would lose this “parameter” next
                 -- time we parse.
-                if not (String.isEmpty key) && String.isEmpty value then
-                    percentEncode Escape.Query key
+                if key /= "" && value == "" then
+                    percentEncode Escape.QueryKey key
 
                 else
-                    percentEncode Escape.Query key ++ "=" ++ percentEncode Escape.Query value
+                    percentEncode Escape.QueryKey key ++ "=" ++ percentEncode Escape.QueryValue value
             )
 
 
@@ -215,10 +220,7 @@ fragmentToString maybeFragment =
 
 percentEncode : Escape.Part -> String -> String
 percentEncode part string =
-    string
-        |> String.toList
-        |> List.map (Escape.forAll part)
-        |> String.concat
+    String.foldr (\char acc -> Escape.forAll part char ++ acc) "" string
 
 
 {-| Turn a [Url] from [elm/url] into an [AppUrl](#AppUrl).
@@ -295,7 +297,7 @@ parsePath path =
                 |> trimLeadingSlash
                 |> trimTrailingSlash
     in
-    if String.isEmpty trimmed then
+    if trimmed == "" then
         []
 
     else

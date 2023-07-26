@@ -1,4 +1,4 @@
-module Escape exposing (Part(..), forAll)
+module Mine.Escape exposing (Part(..), forAll)
 
 
 type Part
@@ -147,7 +147,7 @@ forAll part char =
                 "%2B"
 
             else
-                String.fromChar char
+                "+"
 
         '\u{00A0}' ->
             "%C2%A0"

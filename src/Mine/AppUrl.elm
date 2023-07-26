@@ -1,4 +1,4 @@
-module AppUrl exposing
+module Mine.AppUrl exposing
     ( AppUrl, QueryParameters
     , fromUrl, fromPath
     , toString
@@ -34,7 +34,7 @@ for inspiration.
 -}
 
 import Dict exposing (Dict)
-import Escape
+import Mine.Escape as Escape
 import Url exposing (Url)
 
 
@@ -215,10 +215,7 @@ fragmentToString maybeFragment =
 
 percentEncode : Escape.Part -> String -> String
 percentEncode part string =
-    string
-        |> String.toList
-        |> List.map (Escape.forAll part)
-        |> String.concat
+    String.foldr (\char acc -> Escape.forAll part char ++ acc) "" string
 
 
 {-| Turn a [Url] from [elm/url] into an [AppUrl](#AppUrl).
