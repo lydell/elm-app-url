@@ -3,7 +3,7 @@
     "name": "lydell/elm-app-url",
     "summary": "URLs for applications",
     "license": "MIT",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "exposed-modules": [
         "AppUrl"
     ],
