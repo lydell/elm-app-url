@@ -79,7 +79,7 @@ function makeLog(req) {
       ...args,
       "|",
       Date.now() - startTime.getTime(),
-      "ms"
+      "ms",
     );
   };
 }
@@ -98,12 +98,12 @@ http
       req,
       res,
       log,
-      looksLikeFile(req.url) ? req.url : "/index.html"
+      looksLikeFile(req.url) ? req.url : "/index.html",
     );
   })
   .listen(8080, function () {
     console.log(
-      `Small example ready at: http://localhost:${this.address().port}`
+      `Small example ready at: http://localhost:${this.address().port}`,
     );
   });
 
@@ -117,17 +117,17 @@ http
         path.join(
           path.dirname(fileURLToPath(import.meta.url)),
           "concourse",
-          "web"
+          "web",
         ),
         req,
         res,
         log,
-        looksLikeFile(req.url) ? req.url : "/public/index.html"
+        looksLikeFile(req.url) ? req.url : "/public/index.html",
       );
     }
   })
   .listen(8081, function () {
     console.log(
-      `Concourse example ready at: http://localhost:${this.address().port}`
+      `Concourse example ready at: http://localhost:${this.address().port}`,
     );
   });
