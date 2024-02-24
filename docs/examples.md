@@ -51,13 +51,11 @@ Dict.merge
    Dict.empty
 ```
 
-That is much easier to write using `Dict.Extra.unionWith`:
+That is much easier to write using [Dict.Extra.unionWith]:
 
 ```elm
 Dict.Extra.unionWith (++) queryParametersA queryParametersB
 ```
-
-However, at the time of this writing that function was’t merged yet: https://github.com/elm-community/dict-extra/pull/29
 
 That results in `b` getting both the `B1` and `B2` values:
 
@@ -65,8 +63,6 @@ That results in `b` getting both the `B1` and `B2` values:
 Dict.Extra.unionWith (++) queryParametersA queryParametersB
    == Dict.fromList [ ( "a", [ "A" ] ), ( "b", [ "B1", "B2" ] ), ( "c", [ "C" ] ) ]
 ```
-
-I’m not sure yet if `AppUrl` should include a helper function for this.
 
 ## Try it
 
@@ -80,6 +76,7 @@ If you want to play around with these examples yourself (requires [Node.js]):
 6. `open http://localhost:8081` (Concourse)
 
 [concourse]: https://github.com/concourse/concourse/
+[dict.extra.unionwith]: https://package.elm-lang.org/packages/elmcraft/core-extra/latest/Dict-Extra#unionWith
 [dict.union]: https://package.elm-lang.org/packages/elm/core/latest/Dict#union
 [elm/url]: https://package.elm-lang.org/packages/elm/url/latest
 [example folder]: https://github.com/lydell/elm-app-url/tree/main/example
