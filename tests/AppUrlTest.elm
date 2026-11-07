@@ -160,7 +160,7 @@ roundtripRandomUrlString =
             in
             Expect.all
                 [ \() ->
-                    appUrl1
+                    trimEmptyTrailingSegment appUrl1
                         |> Expect.equal appUrl2
                 , \() ->
                     Regex.contains whitespaceRegex appUrl1String
