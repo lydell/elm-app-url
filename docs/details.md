@@ -50,6 +50,8 @@ The escaping mindset is the same as for `Html`: When using `Html.text` you can g
 
 Note: `AppUrl.fromPath [ "a", "..", "b" ] |> AppUrl.toString` results in `/a/../b` which browsers interpret as `/b`. Escapes do not help: Browsers interpret `/a/%2E%2E/b` as `/b` as well. It does not seem to be possible to have a literal `..` segment in a URL path. Same thing for `.`.
 
+Note: `AppUrl.fromPath [ "", "example.com" ] |> AppUrl.toString` results in `/.//example.com`. Without the `/.` it would be `//example.com`, which browsers interpret as a protocol relative URL – pointing to a different site! Browsers remove the `/.` part, so the path is `//example.com` as expected. Empty segments cannot be escaped, so this is the only way to keep them at the start of the path. (A path like that can come from `AppUrl.fromUrl`, for example if someone visits `https://your-site.com//example.com`.)
+
 ## Plus and space
 
 The [WHATWG URL Standard] defines a format for URLs, as well as the `new URL()` API in JavaScript, which is really good. The `URL` class has a `.searchParams` property which `AppUrl`’s `.queryParameters` is inspired by. `.searchParams` is an instance of the `URLSearchParams` class, which is [specified][urlsearchparams] to use the [application/x-www-form-urlencoded] format. That format says how to parse query parameters, and that `+` should be treated as space.

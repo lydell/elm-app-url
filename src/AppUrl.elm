@@ -138,6 +138,9 @@ type alias QueryParameters =
         --> "/my/path?my=parameter#my-fragment"
 
   - The string always starts with `/`.
+  - If the path starts with an empty string segment, the string starts with `/./`.
+    Otherwise it would start with `//`, which browsers interpret as a protocol
+    relative URL (`//example.com/`). Browsers remove the `/.` part.
   - It only contains a `?` if there are any query parameters.
   - Similarly, it only contains a `#` if there is a fragment.
   - Query parameters with the empty string as the value don’t get any equals
@@ -161,7 +164,16 @@ toString url =
 
 pathToString : List String -> String
 pathToString path =
-    "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
+    let
+        string : String
+        string =
+            "/" ++ String.join "/" (List.map (percentEncode Escape.Path) path)
+    in
+    if String.startsWith "//" string then
+        "/." ++ string
+
+    else
+        string
 
 
 queryParametersToString : QueryParameters -> String

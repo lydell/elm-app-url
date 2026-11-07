@@ -152,6 +152,7 @@ roundtripRandomUrlString =
                 url2 : Url
                 url2 =
                     parseUrl (origin ++ appUrl1String)
+                        |> removeLeadingDotSegment
 
                 appUrl2 : AppUrl
                 appUrl2 =
@@ -228,10 +229,23 @@ roundtripRandomAppUrl =
                     origin
                         ++ AppUrl.toString appUrl1
                         |> parseUrl
+                        |> removeLeadingDotSegment
                         |> AppUrl.fromUrl
             in
             appUrl2
                 |> Expect.equal (trimEmptyTrailingSegment appUrl1)
+
+
+{-| Browsers remove `.` segments, but `Url.fromString` does not.
+Only handle the `/./` that `AppUrl.toString` adds in front of `//`.
+-}
+removeLeadingDotSegment : Url -> Url
+removeLeadingDotSegment url =
+    if String.startsWith "/.//" url.path then
+        { url | path = String.dropLeft 2 url.path }
+
+    else
+        url
 
 
 trimEmptyTrailingSegment : AppUrl -> AppUrl
@@ -515,7 +529,11 @@ empty =
         , test "two empty strings path" <|
             \() ->
                 AppUrl.toString { path = [ "", "" ], queryParameters = Dict.empty, fragment = Nothing }
-                    |> Expect.equal "//"
+                    |> Expect.equal "/.//"
+        , test "leading empty string path segment" <|
+            \() ->
+                AppUrl.toString { path = [ "", "example.com" ], queryParameters = Dict.empty, fragment = Nothing }
+                    |> Expect.equal "/.//example.com"
         , test "trailing slash" <|
             \() ->
                 AppUrl.toString { path = [ "a", "" ], queryParameters = Dict.empty, fragment = Nothing }
