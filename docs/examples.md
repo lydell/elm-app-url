@@ -66,14 +66,13 @@ Dict.Extra.unionWith (++) queryParametersA queryParametersB
 
 ## Try it
 
-If you want to play around with these examples yourself (requires [Node.js]):
+If you want to play around with the small example yourself (requires [Node.js]):
 
-1. `git clone --recurse-submodules git@github.com:lydell/elm-app-url.git`
+1. `git clone git@github.com:lydell/elm-app-url.git`
 2. `cd elm-app-url`
 3. `npm ci`
 4. `npm start`
-5. `open http://localhost:8080` (small example)
-6. `open http://localhost:8081` (Concourse)
+5. `open http://localhost:8080`
 
 [concourse]: https://github.com/concourse/concourse/
 [dict.extra.unionwith]: https://package.elm-lang.org/packages/elmcraft/core-extra/latest/Dict-Extra#unionWith

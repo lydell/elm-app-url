@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as http from "http";
-import * as https from "https";
 import * as path from "path";
 import { fileURLToPath } from "url";
 
@@ -45,30 +44,6 @@ function serveFileHelper(root, req, res, log) {
     .pipe(res, { end: true });
 }
 
-function proxyToWeb(req, res, log, hostname) {
-  const options = {
-    hostname,
-    path: req.url,
-    method: req.method,
-    headers: { ...req.headers, host: hostname },
-  };
-
-  const proxyReq = https.request(options, (proxyRes) => {
-    const { statusCode } = proxyRes;
-    log(`-> ${hostname}`, statusCode);
-    res.writeHead(statusCode, proxyRes.headers);
-    proxyRes.pipe(res, { end: true });
-  });
-
-  proxyReq.on("error", (error) => {
-    log(503);
-    res.writeHead(503);
-    res.end(`Failed to proxy to ${hostname}. Is it down?\n\n${error.stack}`);
-  });
-
-  req.pipe(proxyReq, { end: true });
-}
-
 function makeLog(req) {
   const startTime = new Date();
   const originalRequest = `${req.method} ${req.headers.host} ${req.url}`;
@@ -104,30 +79,5 @@ http
   .listen(8080, function () {
     console.log(
       `Small example ready at: http://localhost:${this.address().port}`,
-    );
-  });
-
-http
-  .createServer((req, res) => {
-    const log = makeLog(req);
-    if (req.url.startsWith("/api/")) {
-      proxyToWeb(req, res, log, "ci.concourse-ci.org");
-    } else {
-      serveFile(
-        path.join(
-          path.dirname(fileURLToPath(import.meta.url)),
-          "concourse",
-          "web",
-        ),
-        req,
-        res,
-        log,
-        looksLikeFile(req.url) ? req.url : "/public/index.html",
-      );
-    }
-  })
-  .listen(8081, function () {
-    console.log(
-      `Concourse example ready at: http://localhost:${this.address().port}`,
     );
   });

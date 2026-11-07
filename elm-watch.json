@@ -5,12 +5,6 @@
                 "example/Main.elm"
             ],
             "output": "example/Main.elm.js"
-        },
-        "Concourse": {
-            "inputs": [
-                "concourse/web/elm/src/Main.elm"
-            ],
-            "output": "concourse/web/public/elm.min.js"
         }
     }
 }
