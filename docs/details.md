@@ -40,7 +40,7 @@ The specification linked to above says that all tabs and newlines should be remo
 
 Then there are different escaping rules for different parts of [AppUrl][appurl-type]:
 
-- path: `/`, `?` and `#` are escaped as well. Slash because it starts a new segment. Question mark and hash since it starts the query and fragment, respectively.
+- path: `/`, `\`, `?` and `#` are escaped as well. Slash because it starts a new segment. Backslash because browsers treat it like a slash in the path of `http:` and `https:` URLs (<https://url.spec.whatwg.org/#path-state>). Question mark and hash since it starts the query and fragment, respectively.
 - query key and value: `=`, `&`, `#` and `+` are escaped as well. Equals since it starts the value, ampersand since it starts a new query parameter, hash since it starts the fragment and plus since it’s treated as a space in the query part. Also, spaces are escaped as `+` – see [Plus and space]. Note that `?k=1=2` is technically valid; the value is `1=2`. elm-app-url escapes the second equals sign anyway, to be compatible with naive parsing code that splits on `=` and assumes it returns a list with only one or two items ([example][suave-naive-parsing]).
 - fragment: No more escaping. The fragment goes on til the end of the URL.
 

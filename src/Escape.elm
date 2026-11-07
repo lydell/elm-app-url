@@ -222,6 +222,9 @@ forPath char =
         '#' ->
             "%23"
 
+        '\\' ->
+            "%5C"
+
         _ ->
             String.fromChar char
 

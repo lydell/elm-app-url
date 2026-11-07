@@ -435,11 +435,11 @@ escaping =
         , test "path escapes" <|
             \() ->
                 AppUrl.toString
-                    { path = [ "/", "?", "#" ]
+                    { path = [ "/", "?", "#", "\\" ]
                     , queryParameters = Dict.empty
                     , fragment = Nothing
                     }
-                    |> Expect.equal "/%2F/%3F/%23"
+                    |> Expect.equal "/%2F/%3F/%23/%5C"
         , test "path non-escapes" <|
             \() ->
                 AppUrl.toString
