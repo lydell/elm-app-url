@@ -100,7 +100,8 @@ roundtripFuzzer =
 appUrlFuzzer : Fuzzer AppUrl
 appUrlFuzzer =
     Fuzz.map3 AppUrl
-        (Fuzz.list Fuzz.string)
+        -- `.` and `..` segments are not supported, see docs/details.md.
+        (Fuzz.list (Fuzz.string |> Fuzz.filter (\segment -> segment /= "." && segment /= "..")))
         (Fuzz.list (Fuzz.pair Fuzz.string (Fuzz.map2 (::) Fuzz.string (Fuzz.list Fuzz.string))) |> Fuzz.map Dict.fromList)
         (Fuzz.maybe Fuzz.string)
 
